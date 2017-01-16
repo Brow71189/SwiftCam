@@ -6,7 +6,7 @@ Created on Sun Dec 11 11:01:24 2016
 """
 
 #import cv2
-import urllib 
+import urllib
 #import numpy as np
 import io
 from PIL import Image
@@ -44,14 +44,14 @@ import numpy as np
 #        r_bytes+=stream.read(1024)
 #        a = r_bytes.find(b'\xff\xd8')
 #        b = r_bytes.find(b'\xff\xd9')
-#        if a!=-1 and b!=-1:        
+#        if a!=-1 and b!=-1:
 #            jpg = r_bytes[a:b+2]
 #            r_bytes= r_bytes[b+2:]
 #            #break
 #            b_im = io.BytesIO(jpg)
 #            q.put(copy.copy(Image.open(b_im)))
 #            #plt.imshow(im)
-#        
+#
 #        #i = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8),cv2.CV_LOAD_IMAGE_COLOR)
 #        #cv2.imshow('i',i)
 #        #if cv2.waitKey(1) ==27:
@@ -62,23 +62,30 @@ import numpy as np
 class Buffer(queue.Queue):
     def __init__(self, maxsize=0):
         super().__init__(maxsize=maxsize)
-    
+
     def get(self, block=True, timeout=None):
         obj = super().get(block=block, timeout=timeout)
         self.task_done()
         return obj
 
 class MJPEG_camera():
-    def __init__(self, url, max_buffer_size=10, max_framerate=60):
+    def __init__(self, url, max_buffer_size=10, max_framerate=60, user=None, password=None):
         self.url = url
+        self.user = user
+        self.password = password
         #self.buffer = queue.Queue(maxsize=max_buffer_size)
         self.buffer = Buffer(maxsize=max_buffer_size)
+        if self.user is not None and self.password is not None:
+            self.passman = urllib.request.HTTPPasswordMgrWithPriorAuth()
+            self.passman.add_password(None, self.url, self.user, self.password)
+            urllib.request.install_opener(urllib.request.build_opener(urllib.request.HTTPBasicAuthHandler(self.passman)))
+
         self._stream = urllib.request.urlopen(self.url)
         self._stop_event = threading.Event()
         self._receiver_thread = threading.Thread(target=self.read_from_stream, daemon=True)
         self._raw_bytes = b''
         self.max_framerate = max_framerate
-        
+
         self._receiver_thread.start()
 
     def close(self):
@@ -86,7 +93,7 @@ class MJPEG_camera():
         self._receiver_thread.join(1)
         self._stream.close()
         self.buffer = None
-        
+
     def read_from_stream(self):
         waittime = 1/self.max_framerate if self.max_framerate > 0 else 0
         last_run  = time.time()
@@ -96,7 +103,7 @@ class MJPEG_camera():
             self._raw_bytes += self._stream.read(1024)
             a = self._raw_bytes.find(b'\xff\xd8')
             b = self._raw_bytes.find(b'\xff\xd9')
-            if a!=-1 and b!=-1:        
+            if a!=-1 and b!=-1:
                 jpg = self._raw_bytes[a:b+2]
                 self._raw_bytes= self._raw_bytes[b+2:]
                 bytes_image = io.BytesIO(jpg)
@@ -114,4 +121,3 @@ class MJPEG_camera():
                 sleeptime = waittime - (np.mean(frametimes) - waittime) - 0.001
                 time.sleep(sleeptime if sleeptime > 0 else 0)
                 #time.sleep(waittime)
-        

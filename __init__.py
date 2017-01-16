@@ -53,14 +53,14 @@ try:
     from . import WebcamCameraManagerImageSource
     __all__.append("WebcamCameraManagerImageSource")
 
-    def __register_camera(hardware_source_id, camera_category, display_name):
+    def __register_camera(hardware_source_id, camera_category, display_name, access_data):
         # function to help with logging
 #        def periodic_logger():
 #            messages = _nioncore.get_log_messages()
 #            data_elements = _nioncore.get_log_images_as_data_elements()
 #            return messages, data_elements
         # create the camera
-        camera = webcam.Camera() #_nioncameramanager.NCMCamera(camera_id=hardware_source_id)
+        camera = webcam.Camera(**access_data) #_nioncameramanager.NCMCamera(camera_id=hardware_source_id)
         camera_map[hardware_source_id] = camera
         # create the hardware source
         camera_adapter = WebcamCameraManagerImageSource.CameraAdapter(hardware_source_id, camera_category, display_name, camera)
@@ -92,7 +92,10 @@ try:
 
     # find cameras automatically
     #__find_cameras()
-    __register_camera('webcam', 'ronchigram', 'Webcam')
+    access_data1 = {'url': 'http://213.193.89.202/axis-cgi/mjpg/video.cgi', 'format': 'mjpeg'}
+    __register_camera('webcam_mjpeg', 'ronchigram', 'MJPEG Webcam', access_data1)
+    access_data2 = {'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'}
+    __register_camera('webcam_pyav', 'ronchigram', 'PyAV Webcam', access_data2)
 
 except ImportError as detail:
     logging.warning("Could not import camera manager hardware sources. Reason: {:s}".format(str(detail)))

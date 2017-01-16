@@ -121,8 +121,8 @@ class CameraAdapter:
         self.camera = camera
         self.modes = ["Run", "Tune", "Snap"]
         self.features = dict()
-        self.features["is_nion_camera"] = True
-        self.features["has_monitor"] = True
+        self.features["is_nion_camera"] = False
+        self.features["has_monitor"] = False
         self.processor = None
         if camera_category.lower() == "ronchigram":
             pass  # put ronchi-specific features here
