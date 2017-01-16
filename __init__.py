@@ -23,8 +23,11 @@ import logging
 # None
 
 # local libraries
-from nion.swift.model import HardwareSource
-from Camera import CameraHardwareSource
+try:
+    from nion.swift.model import HardwareSource
+    from Camera import CameraHardwareSource
+except:
+    pass
 from . import webcam
 
 camera_map = dict()
@@ -96,6 +99,8 @@ try:
     __register_camera('webcam_mjpeg', 'ronchigram', 'MJPEG Webcam', access_data1)
     access_data2 = {'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'}
     __register_camera('webcam_pyav', 'ronchigram', 'PyAV Webcam', access_data2)
+    access_data3 = {'url': 'http://streamsrv62.feratel.co.at/streams/1/05013_587ce970-1c45Vid.mp4', 'format': 'pyav'}
+    __register_camera('webcam_ski', 'ronchigram', 'Ski Webcam', access_data3)
 
 except ImportError as detail:
     logging.warning("Could not import camera manager hardware sources. Reason: {:s}".format(str(detail)))
