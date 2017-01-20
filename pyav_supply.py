@@ -1,14 +1,17 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 """
 Created on Mon Jan 16 15:44:42 2017
 
 @author: mittelberger2
 """
 
-import av
 import threading
 import queue
 import numpy as np
+import time
+import warnings
+import av
+
 
 class Buffer(queue.Queue):
     def __init__(self, maxsize=0):
@@ -19,7 +22,6 @@ class Buffer(queue.Queue):
         self.task_done()
         return obj
 
-
 class PyAV_camera():
     def __init__(self, url, max_buffer_size=10, user=None, password=None):
         self.url = url
@@ -28,10 +30,11 @@ class PyAV_camera():
         self.buffer = Buffer(maxsize=max_buffer_size)
         self.container = av.open(url)
         self.video_stream = next(s for s in self.container.streams if s.type == 'video')
+        print(self.video_stream.format)
         self._stop_event = threading.Event()
         self._receiver_thread = threading.Thread(target=self.read_from_stream, daemon=True)
         self._receiver_thread.start()
-        
+
     def close(self):
         self._stop_event.set()
         self._receiver_thread.join(1)
@@ -46,4 +49,5 @@ class PyAV_camera():
                 frame = frame.to_image()
                 if self.buffer.full():
                     self.buffer.get()
-                self.buffer.put(np.array(frame))
+                self.buffer.put(frame)
+            time.sleep(0.25)

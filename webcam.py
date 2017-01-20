@@ -9,9 +9,10 @@ import numpy as np
 
 from .mjpeg_supply import MJPEG_camera
 from .pyav_supply import PyAV_camera
+from .acti_tcm4201_supply import ACTI_camera
 
 class Camera():
-    __camera_formats = {'mjpeg': MJPEG_camera, 'pyav': PyAV_camera}
+    __camera_formats = {'mjpeg': MJPEG_camera, 'pyav': PyAV_camera, 'acti': ACTI_camera}
 
     def __init__(self, **kwargs):
         self.format = kwargs.get('format', 'mjpeg')

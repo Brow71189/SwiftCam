@@ -37,14 +37,14 @@ __all__ = ["camera_map"]
 #class Camera:
 #    def __init__(self):
 #        self.on_low_level_parameter_changed = None
-#    
+#
 #    def get_exposure_ms(self, mode):
 #        print(mode)
 #        return 1
-#    
+#
 #    def get_binning(self, mode):
 #        return 1
-#    
+#
 #    def mode_as_index(self, mode):
 #        return 1
 
@@ -95,12 +95,12 @@ try:
 
     # find cameras automatically
     #__find_cameras()
-    access_data1 = {'url': 'http://213.193.89.202/axis-cgi/mjpg/video.cgi', 'format': 'mjpeg'}
-    __register_camera('webcam_mjpeg', 'ronchigram', 'MJPEG Webcam', access_data1)
-    access_data2 = {'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'}
-    __register_camera('webcam_pyav', 'ronchigram', 'PyAV Webcam', access_data2)
-    access_data3 = {'url': 'http://streamsrv62.feratel.co.at/streams/1/05013_587ce970-1c45Vid.mp4', 'format': 'pyav'}
-    __register_camera('webcam_ski', 'ronchigram', 'Ski Webcam', access_data3)
+    access_data1 = {'url': 'http://131.130.31.203/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
+    __register_camera('nionppcam', 'None', 'Polepiece Camera', access_data1)
+    access_data2 = {'url': 'http://131.130.31.202/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
+    __register_camera('nionllcam', 'ronchigram', 'Loadlock Camera', access_data2)
+    access_data3 = {'url': 'http://131.130.31.214/channel2', 'format': 'mjpeg', 'user': 'admin', 'password': 'admin'}
+    __register_camera('nionppcam2', 'ronchigram', 'Polepiece Camera 2', access_data3)
 
 except ImportError as detail:
     logging.warning("Could not import camera manager hardware sources. Reason: {:s}".format(str(detail)))

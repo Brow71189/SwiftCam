@@ -114,10 +114,10 @@ class MJPEG_camera():
                 frametimes.append(now - last_run)
                 frametimes.pop(0)
                 last_run = now
-                if counter > 10:
-                    print('Current fps: {:.2f}'.format(1/np.mean(frametimes)), end='')
-                    counter = 0
-                counter += 1
+#                if counter > 10:
+#                    print('Current fps: {:.2f}'.format(1/np.mean(frametimes)), end='')
+#                    counter = 0
+#                counter += 1
                 sleeptime = waittime - (np.mean(frametimes) - waittime) - 0.001
                 time.sleep(sleeptime if sleeptime > 0 else 0)
                 #time.sleep(waittime)
