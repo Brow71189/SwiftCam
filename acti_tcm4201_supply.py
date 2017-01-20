@@ -40,7 +40,6 @@ class ACTI_camera():
     def close(self):
         self._stop_event.set()
         self._receiver_thread.join(1)
-        self._stream.close()
         self.buffer = None
 
     def read_from_stream(self):
