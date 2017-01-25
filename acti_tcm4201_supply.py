@@ -4,25 +4,11 @@ Created on Fri Jan 20 14:29:12 2017
 
 @author: ASUser
 """
-import queue
+
 import threading
 from PIL import Image
 from urllib import request
-
-
-class Buffer(queue.Queue):
-    def __init__(self, maxsize=0):
-        super().__init__(maxsize=maxsize)
-
-    def get(self, block=True, timeout=None):
-        obj = super().get(block=block, timeout=timeout)
-        self.task_done()
-        return obj
-
-    def put(self, obj, block=True, timeout=None):
-        if self.full():
-            self.get()
-        super().put(obj, block=block, timeout=None)
+from .buffer import Buffer
 
 class ACTI_camera():
     def __init__(self, url, max_buffer_size=10, max_framerate=60, user=None, password=None):

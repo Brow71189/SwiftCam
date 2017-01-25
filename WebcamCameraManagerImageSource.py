@@ -115,7 +115,7 @@ class CameraAcquisitionTask:
 
 class CameraAdapter:
 
-    def __init__(self, hardware_source_id, camera_category, display_name, camera):
+    def __init__(self, hardware_source_id, display_name, camera):
         self.hardware_source_id = hardware_source_id
         self.display_name = display_name
         self.camera = camera
@@ -124,11 +124,6 @@ class CameraAdapter:
         self.features["is_nion_camera"] = False
         self.features["has_monitor"] = False
         self.processor = None
-        if camera_category.lower() == "ronchigram":
-            pass  # put ronchi-specific features here
-        if camera_category.lower() == "eels":
-            self.features["is_eels_camera"] = True
-            self.processor = HardwareSource.SumProcessor(((0.25, 0.0), (0.5, 1.0)))
         self.on_selected_profile_index_changed = None
         self.on_profile_frame_parameters_changed = None
 

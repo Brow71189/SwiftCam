@@ -6,21 +6,8 @@ Created on Mon Jan 16 15:44:42 2017
 """
 
 import threading
-import queue
-import numpy as np
-import time
-import warnings
 import av
-
-
-class Buffer(queue.Queue):
-    def __init__(self, maxsize=0):
-        super().__init__(maxsize=maxsize)
-
-    def get(self, block=True, timeout=None):
-        obj = super().get(block=block, timeout=timeout)
-        self.task_done()
-        return obj
+from .buffer import Buffer
 
 class PyAV_camera():
     def __init__(self, url, max_buffer_size=10, user=None, password=None):
@@ -47,7 +34,4 @@ class PyAV_camera():
             frame = packet.decode_one()
             if frame is not None:
                 frame = frame.to_image()
-                if self.buffer.full():
-                    self.buffer.get()
                 self.buffer.put(frame)
-            time.sleep(0.25)

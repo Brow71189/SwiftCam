@@ -6,14 +6,43 @@ Created on Sun Dec 11 12:59:33 2016
 """
 import time
 import numpy as np
+import os
+import pyclbr
+import importlib
 
-from .mjpeg_supply import MJPEG_camera
-from .pyav_supply import PyAV_camera
-from .acti_tcm4201_supply import ACTI_camera
+_camera_formats = dict()
+
+def import_camera_supplies():
+    dirlist = os.listdir(os.path.dirname(__file__))
+    matched_dirlist = []
+    for name in dirlist:
+        if os.path.splitext(name)[1] == '.py' and os.path.splitext(name.lower())[0].endswith('_supply'):
+            matched_dirlist.append(os.path.splitext(name)[0])
+    
+    camera_classes = []
+    for name in matched_dirlist:
+        try:
+            contents = pyclbr.readmodule(name, path=[os.path.dirname(__file__)])
+        except AttributeError:
+            print('Could not read module ' + name)
+        else:
+            for classname in contents.keys():
+                if classname.lower().endswith('_camera'):
+                    camera_classes.append((name, classname))
+    
+    for camera_module, camera_class in camera_classes:
+        try:
+            mod = importlib.import_module('.' + camera_module, package='SwiftCam')
+            cam = getattr(mod, camera_class)
+        except ImportError as detail:
+            print(detail)
+            print('Could not import camera class {:s} from module {:s}'.format(camera_class, camera_module))
+        else:
+            _camera_formats[camera_module.split('_')[0].lower()] = cam
+
+import_camera_supplies()
 
 class Camera():
-    __camera_formats = {'mjpeg': MJPEG_camera, 'pyav': PyAV_camera, 'acti': ACTI_camera}
-
     def __init__(self, **kwargs):
         self.format = kwargs.get('format', 'mjpeg')
         self.mode = 'Run'
@@ -24,9 +53,7 @@ class Camera():
         self.readout_area = self.sensor_dimensions
         self.cam = None
         self.last_frame_taken = 0
-        #self.url = 'http://192.168.0.2:8080/video'
-        self.url = kwargs.get('url')#'http://213.193.89.202/axis-cgi/mjpg/video.cgi'
-        #self.url = 'http://131.130.31.214/channel2'
+        self.url = kwargs.get('url')
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
         self.frame_number = 0
@@ -45,7 +72,7 @@ class Camera():
 
     def start_live(self):
         if self.url is not None:
-            self.cam = self.__camera_formats[self.format](self.url, user=self.user, password=self.password)
+            self.cam = _camera_formats[self.format.lower()](self.url, user=self.user, password=self.password)
 
     def stop_live(self):
         time.sleep(1)

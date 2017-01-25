@@ -1,12 +1,3 @@
-#from . import EELSImageSource
-
-#def run():
-#    EELSImageSource.run()
-
-#from . import configuration_interface
-#from . import EELScam_GUI
-
-# -*- coding: utf-8 -*-
 """
 Created on Fri Aug  5 09:16:23 2016
 
@@ -14,95 +5,60 @@ Created on Fri Aug  5 09:16:23 2016
 """
 
 # standard libraries
-#import configparser
+import json
 import logging
-#import os
-#import traceback
-
-# third party libraries
-# None
-
-# local libraries
+import os
 try:
     from nion.swift.model import HardwareSource
     from Camera import CameraHardwareSource
 except:
     pass
 from . import webcam
+from . import WebcamCameraManagerImageSource
 
-camera_map = dict()
+#camera_map = dict()
+#__all__ = ["camera_map"]
+#__all__.append("WebcamCameraManagerImageSource")
 
-__all__ = ["camera_map"]
+CONFIG_FILE = 'webcam_config.json'
 
-#class Camera:
-#    def __init__(self):
-#        self.on_low_level_parameter_changed = None
-#
-#    def get_exposure_ms(self, mode):
-#        print(mode)
-#        return 1
-#
-#    def get_binning(self, mode):
-#        return 1
-#
-#    def mode_as_index(self, mode):
-#        return 1
+def register_camera(hardware_source_id, display_name, access_data):
+    # create the camera
+    camera = webcam.Camera(**access_data)
+    #camera_map[hardware_source_id] = camera
+    # create the hardware source
+    camera_adapter = WebcamCameraManagerImageSource.CameraAdapter(hardware_source_id, display_name, camera)
+    hardware_source = CameraHardwareSource.CameraHardwareSource(camera_adapter, None)
+    hardware_source.modes = camera_adapter.modes
+    # register it with the manager
+    HardwareSource.HardwareSourceManager().register_hardware_source(hardware_source)
 
-# package imports
-try:
-    #import _nioncore
-    #import _nioncameramanager
+def load_camera_configurations_and_create_cameras():
+    with open(os.path.join(os.path.dirname(__file__), CONFIG_FILE)) as config_file:
+        camera_parameters = json.load(config_file)
+        for camera in camera_parameters:
+            cam_id = camera.pop('id')
+            name = camera.pop('name', cam_id)
+            try:
+                register_camera(cam_id, name, camera)
+            except Exception as detail:
+                print('Could not register camera {:s}. Reason: {:s}'.format(cam_id, str(detail)))
+                
+load_camera_configurations_and_create_cameras()
+                
+#access_data1 = {'url': 'http://131.130.31.203/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
+#__register_camera('nionppcam', 'None', 'Polepiece Camera', access_data1)
+#access_data2 = {'url': 'http://131.130.31.202/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
+#__register_camera('nionllcam', 'ronchigram', 'Loadlock Camera', access_data2)
+#access_data3 = {'url': 'http://131.130.31.214/channel2', 'format': 'mjpeg', 'user': 'admin', 'password': 'admin'}
+#__register_camera('nionppcam2', 'ronchigram', 'Polepiece Camera 2', access_data3)
 
-    from . import WebcamCameraManagerImageSource
-    __all__.append("WebcamCameraManagerImageSource")
-
-    def __register_camera(hardware_source_id, camera_category, display_name, access_data):
-        # function to help with logging
-#        def periodic_logger():
-#            messages = _nioncore.get_log_messages()
-#            data_elements = _nioncore.get_log_images_as_data_elements()
-#            return messages, data_elements
-        # create the camera
-        camera = webcam.Camera(**access_data) #_nioncameramanager.NCMCamera(camera_id=hardware_source_id)
-        camera_map[hardware_source_id] = camera
-        # create the hardware source
-        camera_adapter = WebcamCameraManagerImageSource.CameraAdapter(hardware_source_id, camera_category, display_name, camera)
-        hardware_source = CameraHardwareSource.CameraHardwareSource(camera_adapter, None)#periodic_logger)
-        hardware_source.modes = camera_adapter.modes
-        #hardware_source.acquire_sequence = camera.acquire_sequence
-        # register it with the manager
-        HardwareSource.HardwareSourceManager().register_hardware_source(hardware_source)
-
-#    def __find_cameras():
-#        _nioncameramanager.register_cameras()
-#        instances = _nioncameramanager.NionCameraManagerPy.CCameraManager_GetInstance().GetCameraInstances()
-#        logging.info("Looking for cam.ini files %s", _nioncameramanager.NionCameraManagerPy.CCameraManager_GetInstance().GetRootConfigPath())
-#        # instances is a wrapped SWIG object (vector of shared pointers.)  It doesn't wrap all that nicely, hence the
-#        # somewhat strange loop here.
-#        errors = []
-#        for i in range(instances.size()):
-#            try:
-#                hardware_id = instances[i].GetCameraID()
-#                camera_name = instances[i].GetCameraName()
-#                #camera_category = instances[i].GetCameraCategory()
-#                camera_category = "eels"
-#                __register_camera(hardware_id, camera_category, camera_name)
-#                logging.info("Found camera %s %s %s", hardware_id, camera_name, camera_category)
-#            except RuntimeError as e:
-#                errors.append(e)
-#        if len(errors):
-#            [logging.warn(error) for error in errors]
-
-    # find cameras automatically
-    #__find_cameras()
-    access_data1 = {'url': 'http://131.130.31.203/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
-    __register_camera('nionppcam', 'None', 'Polepiece Camera', access_data1)
-    access_data2 = {'url': 'http://131.130.31.202/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
-    __register_camera('nionllcam', 'ronchigram', 'Loadlock Camera', access_data2)
-    access_data3 = {'url': 'http://131.130.31.214/channel2', 'format': 'mjpeg', 'user': 'admin', 'password': 'admin'}
-    __register_camera('nionppcam2', 'ronchigram', 'Polepiece Camera 2', access_data3)
-
-except ImportError as detail:
-    logging.warning("Could not import camera manager hardware sources. Reason: {:s}".format(str(detail)))
-
-
+#access_data1 = {'url': 'http://213.193.89.202/axis-cgi/mjpg/video.cgi', 'format': 'mjpeg'}
+#__register_camera('webcam_mjpeg', 'ronchigram', 'MJPEG Webcam', access_data1)
+#access_data2 = {'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'}
+#__register_camera('webcam_pyav', 'ronchigram', 'PyAV Webcam', access_data2)
+#access_data3 = {'url': 'https://streamsrv60.feratel.co.at/streams/1/05604_5888ab1f-d4d7Vid.mp4?dcsdesign=feratel4', 'format': 'pyav'}
+#__register_camera('webcam_ski', 'ronchigram', 'Ski Webcam', access_data3)
+#camera_data = [{'name': 'MJPEG Webcam', 'id': 'webcam_mjpeg', 'url': 'http://213.193.89.202/axis-cgi/mjpg/video.cgi', 'format': 'mjpeg'},
+#               {'name': 'PyAV Webcam', 'id': 'webcam_pyav', 'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'},
+#               {'name': 'Ski Webcam', 'id': 'webcam_ski', 'url': 'https://streamsrv60.feratel.co.at/streams/1/05604_5888ab1f-d4d7Vid.mp4?dcsdesign=feratel4', 'format': 'pyav'}]

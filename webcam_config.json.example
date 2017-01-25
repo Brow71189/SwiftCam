@@ -1,0 +1,20 @@
+[
+    {
+        "format": "mjpeg",
+        "id": "webcam_mjpeg",
+        "url": "http://213.193.89.202/axis-cgi/mjpg/video.cgi",
+        "name": "MJPEG Webcam"
+    },
+    {
+        "format": "pyav",
+        "id": "webcam_pyav",
+        "url": "rtsp://mm2.pcslab.com/mm/7h1500.mp4",
+        "name": "PyAV Webcam"
+    },
+    {
+        "format": "pyav",
+        "id": "webcam_ski",
+        "url": "https://streamsrv60.feratel.co.at/streams/1/05604_5888ab1f-d4d7Vid.mp4?dcsdesign=feratel4",
+        "name": "Ski Webcam"
+    }
+]
