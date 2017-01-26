@@ -14,6 +14,12 @@ class PyAV_camera():
         self.url = url
         self.user = user
         self.password = password
+        if self.user is not None and self.password is not None:
+            spliturl = self.url.split('://')
+            concatenated_url = user + ':' + password + '@' + spliturl[-1]
+            if len(spliturl) > 1:
+                concatenated_url = spliturl[0] + '://' + concatenated_url
+            self.url = concatenated_url
         self.buffer = Buffer(maxsize=max_buffer_size)
         self.container = av.open(url)
         self.video_stream = next(s for s in self.container.streams if s.type == 'video')

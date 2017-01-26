@@ -18,7 +18,6 @@ class MJPEG_camera():
         self.url = url
         self.user = user
         self.password = password
-        #self.buffer = queue.Queue(maxsize=max_buffer_size)
         self.buffer = Buffer(maxsize=max_buffer_size)
         if self.user is not None and self.password is not None:
             self.passman = urllib.request.HTTPPasswordMgrWithPriorAuth()

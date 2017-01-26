@@ -44,7 +44,7 @@ import_camera_supplies()
 
 class Camera():
     def __init__(self, **kwargs):
-        self.format = kwargs.get('format', 'mjpeg')
+        self.format = kwargs.get('format', 'pyav')
         self.mode = 'Run'
         self.mode_as_index = 0
         self.exposure_ms = 0
