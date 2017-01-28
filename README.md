@@ -64,7 +64,7 @@ for a handler to be correctly recognized:
 3. The new module must implement a class whose name ends with "_camera"
 
 The easiest way is to take the random example camera "random_example_supply.py" and edit it. As you can see there, the
-camera is immediately started when an instance of the camera class is created. The "__init__" method has to take the
+camera is immediately started when an instance of the camera class is created. The `__init__` method has to take the
 url as a first argument and accept the keyword arguments "user", "password" and "max_framerate".
 Passing images is done by a buffer class of which the camera has to hold an instance under the attribute "buffer". The
 easiest way is to use the buffer code shipped with this package. Images in the buffer have to be either numpy arrays
