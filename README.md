@@ -60,16 +60,16 @@ handlers will be detected automatically and will be available after a restart of
 for a handler to be correctly recognized:
 
 1. The new python module must be in the same folder as all other source code files of this package
-2. The filename of the new module must end with "_supply.py"
-3. The new module must implement a class whose name ends with "_camera"
+2. The filename of the new module must end with `_supply.py`
+3. The new module must implement a class whose name ends with `_camera`
 
-The easiest way is to take the random example camera "random_example_supply.py" and edit it. As you can see there, the
+The easiest way is to take the random example camera `random_example_supply.py` and edit it. As you can see there, the
 camera is immediately started when an instance of the camera class is created. The `__init__` method has to take the
-url as a first argument and accept the keyword arguments "user", "password" and "max_framerate".
-Passing images is done by a buffer class of which the camera has to hold an instance under the attribute "buffer". The
+url as a first argument and accept the keyword arguments `user`, `password` and `max_framerate`.
+Passing images is done by a buffer class of which the camera has to hold an instance under the attribute `buffer`. The
 easiest way is to use the buffer code shipped with this package. Images in the buffer have to be either numpy arrays
-or PIL Image objects. They can be sent to the buffer by calling "buffer.put(image)".
-The camera class also has to implement a method "close" which should take care of stopping the loop that puts images
+or PIL Image objects. They can be sent to the buffer by calling `buffer.put(image)`.
+The camera class also has to implement a method `close` which should take care of stopping the loop that puts images
 into the buffer.
 
 ¹ www.nion.com/swift
