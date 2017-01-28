@@ -58,6 +58,7 @@ Implementing new camera formats
 If your stream is not supported by the handlers shipped with this code it is easy to implement your own one. New
 handlers will be detected automatically and will be available after a restart of NionSwift. There a three requirements
 for a handler to be correctly recognized:
+
 1. The new python module must be in the same folder as all other source code files of this package
 2. The filename of the new module must end with "_supply.py"
 3. The new module must implement a class whose name ends with "_camera"
@@ -74,5 +75,3 @@ into the buffer.
 ¹ www.nion.com/swift
 
 ²https://github.com/mikeboers/PyAV
-
-³
