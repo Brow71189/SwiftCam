@@ -12,15 +12,10 @@
         "name": "PyAV Webcam"
     },
     {
-        "format": "pyav",
-        "id": "webcam_ski",
-        "url": "https://streamsrv60.feratel.co.at/streams/1/05604_5888ab1f-d4d7Vid.mp4?dcsdesign=feratel4",
-        "name": "Ski Webcam"
-    },
-    {
         "format": "random",
         "id": "random_camera",
         "url": "http://example.url",
-        "name": "Random Example Camera"
+        "name": "Random Example Camera",
+        "max_framerate": 30
     }
 ]

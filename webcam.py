@@ -52,10 +52,10 @@ class Camera():
         self.sensor_dimensions = (512,512)
         self.readout_area = self.sensor_dimensions
         self.cam = None
-        self.last_frame_taken = 0
         self.url = kwargs.get('url')
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
+        self.max_framerate = kwargs.get('max_framerate', 0)
         self.frame_number = 0
 
     def set_exposure_ms(self, exposure_ms, mode_id):
@@ -72,19 +72,19 @@ class Camera():
 
     def start_live(self):
         if self.url is not None:
-            self.cam = _camera_formats[self.format.lower()](self.url, user=self.user, password=self.password)
+            self.cam = _camera_formats[self.format.lower()](self.url, user=self.user, password=self.password,
+                                                            max_framerate=self.max_framerate)
 
     def stop_live(self):
-        time.sleep(1)
+        time.sleep(0.5)
         self.cam.close()
 
     def acquire_image(self):
-        now = time.time()
-        if now - self.last_frame_taken < self.exposure_ms*0.001:
-            time.sleep(self.exposure_ms*0.001 - (now - self.last_frame_taken))
-        self.last_frame_taken = now
         data_element = {}
-        data_element['data'] = np.array(self.cam.buffer.get(timeout=10))[..., (2, 1, 0)]
+        data = np.array(self.cam.buffer.get(timeout=10))
+        if len(data.shape) > 2 and data.shape[-1] == 3:
+            data = data[..., (2, 1, 0)]
+        data_element['data'] = data
         data_element['properties'] = {'spatial_calibrations': [{'offset': 0, 'scale': 1, 'units': None}]*2,
                                       'frame_number': self.frame_number}
         self.frame_number += 1

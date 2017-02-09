@@ -15,7 +15,12 @@ class ACTI_camera():
         self.url = url
         self.user = user
         self.password = password
-        #self.buffer = queue.Queue(maxsize=max_buffer_size)
+        if self.user is not None and self.password is not None and not '@' in self.url:
+            spliturl = self.url.split('://')
+            concatenated_url = user + ':' + password + '@' + spliturl[-1]
+            if len(spliturl) > 1:
+                concatenated_url = spliturl[0] + '://' + concatenated_url
+            self.url = concatenated_url
         self.buffer = Buffer(maxsize=max_buffer_size)
         self._stop_event = threading.Event()
         self._receiver_thread = threading.Thread(target=self.read_from_stream, daemon=True)

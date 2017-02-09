@@ -41,7 +41,7 @@ The tags that can be specified for a camera are the following:
 * "format": optional, defaults to "pyav". Currently supported are "pyav", "mjpeg", "acti" and "random".
   - "pyav" will try to play the stream with PyAV (which is essentially ffmepg).
   - "mjpeg" will treat the stream as "MJPEG".
-  - "acti" is a special implementation to support acti tcm 4201 cameras as they are used by Nion for some of thei
+  - "acti" is a special implementation to support acti tcm 4201 cameras as they are used by Nion for some of their
            microscopes.
   - "random" will enable the example camera implementation which just shows random noise. This is useful to test your
              installation.
@@ -63,14 +63,17 @@ for a handler to be correctly recognized:
 2. The filename of the new module must end with `_supply.py`
 3. The new module must implement a class whose name ends with `_camera`
 
-The easiest way is to take the random example camera `random_example_supply.py` and edit it. As you can see there, the
-camera is immediately started when an instance of the camera class is created. The `__init__` method has to take the
+The easiest way is to start from the random example camera `random_example_supply.py` and alter it. As you can see there,
+the camera is immediately started when an instance of the camera class is created. The `__init__` method has to take the
 url as a first argument and accept the keyword arguments `user`, `password` and `max_framerate`.
 Passing images is done by a buffer class of which the camera has to hold an instance under the attribute `buffer`. The
 easiest way is to use the buffer code shipped with this package. Images in the buffer have to be either numpy arrays
 or PIL Image objects. They can be sent to the buffer by calling `buffer.put(image)`.
 The camera class also has to implement a method `close` which should take care of stopping the loop that puts images
 into the buffer.
+The "format" tag assigned to your new camera handler will be the part of the camera class name before the first
+underscore. For example if your handler implements the class `my_new_camera`, the format of this camera will be
+"my". This naming is case-insensitive.
 
 ¹ www.nion.com/swift
 
