@@ -1,12 +1,27 @@
-"""
-Created on Fri Aug  5 09:16:23 2016
-
-@author: mittelberger
-"""
+#MIT License
+#
+#Copyright (c) 2017 Andreas Mittelberger
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 # standard libraries
 import json
-import logging
 import os
 try:
     from nion.swift.model import HardwareSource
@@ -15,10 +30,6 @@ except:
     pass
 from . import webcam
 from . import WebcamCameraManagerImageSource
-
-#camera_map = dict()
-#__all__ = ["camera_map"]
-#__all__.append("WebcamCameraManagerImageSource")
 
 CONFIG_FILE = 'webcam_config.json'
 
@@ -45,20 +56,3 @@ def load_camera_configurations_and_create_cameras():
                 print('Could not register camera {:s}. Reason: {:s}'.format(cam_id, str(detail)))
                 
 load_camera_configurations_and_create_cameras()
-                
-#access_data1 = {'url': 'http://131.130.31.203/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
-#__register_camera('nionppcam', 'None', 'Polepiece Camera', access_data1)
-#access_data2 = {'url': 'http://131.130.31.202/cgi-bin/encoder?USER=admin&PWD=123456&SNAPSHOT', 'format': 'acti'}
-#__register_camera('nionllcam', 'ronchigram', 'Loadlock Camera', access_data2)
-#access_data3 = {'url': 'http://131.130.31.214/channel2', 'format': 'mjpeg', 'user': 'admin', 'password': 'admin'}
-#__register_camera('nionppcam2', 'ronchigram', 'Polepiece Camera 2', access_data3)
-
-#access_data1 = {'url': 'http://213.193.89.202/axis-cgi/mjpg/video.cgi', 'format': 'mjpeg'}
-#__register_camera('webcam_mjpeg', 'ronchigram', 'MJPEG Webcam', access_data1)
-#access_data2 = {'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'}
-#__register_camera('webcam_pyav', 'ronchigram', 'PyAV Webcam', access_data2)
-#access_data3 = {'url': 'https://streamsrv60.feratel.co.at/streams/1/05604_5888ab1f-d4d7Vid.mp4?dcsdesign=feratel4', 'format': 'pyav'}
-#__register_camera('webcam_ski', 'ronchigram', 'Ski Webcam', access_data3)
-#camera_data = [{'name': 'MJPEG Webcam', 'id': 'webcam_mjpeg', 'url': 'http://213.193.89.202/axis-cgi/mjpg/video.cgi', 'format': 'mjpeg'},
-#               {'name': 'PyAV Webcam', 'id': 'webcam_pyav', 'url': 'rtsp://mm2.pcslab.com/mm/7h1500.mp4', 'format': 'pyav'},
-#               {'name': 'Ski Webcam', 'id': 'webcam_ski', 'url': 'https://streamsrv60.feratel.co.at/streams/1/05604_5888ab1f-d4d7Vid.mp4?dcsdesign=feratel4', 'format': 'pyav'}]
