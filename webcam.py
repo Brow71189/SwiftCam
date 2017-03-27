@@ -67,6 +67,7 @@ class Camera():
         self.binning = 1
         self.sensor_dimensions = (512,512)
         self.readout_area = self.sensor_dimensions
+        self.binning_values = [1]
         self.cam = None
         self.url = kwargs.get('url')
         self.user = kwargs.get('user')
@@ -85,6 +86,9 @@ class Camera():
 
     def get_binning(self, mode_id):
         return self.binning
+
+    def get_expected_dimensions(self, binning):
+        return self.sensor_dimensions
 
     def start_live(self):
         if self.url is not None:

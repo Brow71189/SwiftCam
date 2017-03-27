@@ -141,6 +141,7 @@ class CameraAdapter:
         self.hardware_source_id = hardware_source_id
         self.display_name = display_name
         self.camera = camera
+        self.binning_values = camera.binning_values
         self.modes = ["Run", "Tune", "Snap"]
         self.features = dict()
         self.features["is_nion_camera"] = False
