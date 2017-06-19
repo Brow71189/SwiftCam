@@ -22,6 +22,8 @@ After having installed all requirements just download the source code, unzip it 
 plugins location. The correct location for your operating system is described on the following website:
 http://nion.com/swift/developer/introduction.html#extension-locations
 
+If you used github's "download ZIP" function make sure you rename the project folder to "SwiftCam" after unpacking it.
+
 
 Usage
 =====
