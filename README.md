@@ -22,7 +22,7 @@ After having installed all requirements just download the source code, unzip it 
 plugins location. The correct location for your operating system is described on the following website:
 http://nion.com/swift/developer/introduction.html#extension-locations
 
-If you used github's "download ZIP" function make sure you rename the project folder to "SwiftCam" after unpacking it.
+__If you used github's "download ZIP" function make sure you rename the project folder to "SwiftCam" after unpacking it.__
 
 
 Usage
@@ -51,7 +51,7 @@ The tags that can be specified for a camera are the following:
 * "name": optional, defaults to "id". This is the name under which the camera will be displayed in Nion Swift.
 * "user": optional, the username if your stream requires one.
 * "password": optional, the password for your stream if it is protected.
-* "max_framerate": optional, limits the framerate of the stream to the value given here. This is useful if you
+* "max_framerate": optional, limits the framerate of the stream to the value given here. This is useful if you encounter
                    heavy CPU load on your computer with a stream.
 
 Implementing new camera formats
