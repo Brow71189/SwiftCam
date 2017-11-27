@@ -1,0 +1,21 @@
+[
+    {
+        "format": "mjpeg",
+        "id": "webcam_mjpeg",
+        "url": "http://213.193.89.202/axis-cgi/mjpg/video.cgi",
+        "name": "MJPEG Webcam"
+    },
+    {
+        "format": "pyav",
+        "id": "webcam_pyav",
+        "url": "rtsp://mm2.pcslab.com/mm/7h1500.mp4",
+        "name": "PyAV Webcam"
+    },
+    {
+        "format": "random",
+        "id": "random_camera",
+        "url": "http://example.url",
+        "name": "Random Example Camera",
+        "max_framerate": 30
+    }
+]

@@ -28,10 +28,11 @@ import os
 #from nion.instrumentation.camera_base import CameraHardwareSource
 
 from webcam_utils import webcam
-from . import WebcamCameraManagerImageSource
+#from . import WebcamCameraManagerImageSource
 from nion.utils import Registry
 
-CONFIG_FILE = 'webcam_config.json'
+with open(os.path.join(os.path.dirname(__file__), 'config_path.txt')) as config_file_path:
+    CONFIG_FILE = os.path.join(config_file_path.readline().strip(), 'webcam_config.json')
 
 class WebcamExtension:
 
@@ -49,7 +50,7 @@ class WebcamExtension:
         camera = webcam.Camera(**access_data)
         #camera_map[hardware_source_id] = camera
         # create the hardware source
-        camera_adapter = WebcamCameraManagerImageSource.CameraAdapter(hardware_source_id, display_name, camera)
+        #camera_adapter = WebcamCameraManagerImageSource.CameraAdapter(hardware_source_id, display_name, camera)
         #hardware_source = CameraHardwareSource(camera_adapter, None)
         #hardware_source.modes = camera_adapter.modes
         # register it with the manager
@@ -62,7 +63,7 @@ class WebcamExtension:
 
 
     def load_camera_configurations_and_create_cameras(self):
-        with open(os.path.join(os.path.dirname(__file__), CONFIG_FILE)) as config_file:
+        with open(CONFIG_FILE) as config_file:
             camera_parameters = json.load(config_file)
             for camera in camera_parameters:
                 cam_id = camera.pop('id')
