@@ -34,7 +34,7 @@ def import_camera_supplies():
     for name in dirlist:
         if os.path.splitext(name)[1] == '.py' and os.path.splitext(name.lower())[0].endswith('_supply'):
             matched_dirlist.append(os.path.splitext(name)[0])
-    
+
     camera_classes = []
     for name in matched_dirlist:
         try:
@@ -45,10 +45,10 @@ def import_camera_supplies():
             for classname in contents.keys():
                 if classname.lower().endswith('_camera'):
                     camera_classes.append((name, classname))
-    
+
     for camera_module, camera_class in camera_classes:
         try:
-            mod = importlib.import_module('.' + camera_module, package='SwiftCam')
+            mod = importlib.import_module('.' + camera_module, package='webcam_utils')
             cam = getattr(mod, camera_class)
         except ImportError as detail:
             print(detail)

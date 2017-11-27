@@ -140,6 +140,7 @@ class CameraAdapter:
     def __init__(self, hardware_source_id, display_name, camera):
         self.hardware_source_id = hardware_source_id
         self.display_name = display_name
+        self.hardware_source_name = display_name
         self.camera = camera
         self.binning_values = camera.binning_values
         self.modes = ["Run", "Tune", "Snap"]
