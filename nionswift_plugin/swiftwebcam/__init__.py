@@ -20,19 +20,84 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-# standard libraries
-import json
-import os
+import gettext
+import typing
 
-#from nion.swift.model import HardwareSource
-#from nion.instrumentation.camera_base import CameraHardwareSource
-
-from webcam_utils import webcam
-#from . import WebcamCameraManagerImageSource
+from nion.ui import Declarative
+from nion.utils import Converter
+from nion.utils import Model
 from nion.utils import Registry
 
-with open(os.path.join(os.path.dirname(__file__), 'config_path.txt')) as config_file_path:
-    CONFIG_FILE = os.path.join(config_file_path.readline().strip(), 'webcam_config.json')
+from webcam_utils import webcam
+
+
+_ = gettext.gettext
+
+
+class VideoDeviceFactory:
+
+    display_name = _("Swift Cam")
+    factory_id = "swiftcam"
+
+    def make_video_device(self, settings: dict) -> typing.Optional[webcam.Camera]:
+        if settings.get("driver") == self.factory_id:
+            camera_id = settings.get("device_id", settings.get("id"))
+            camera_name = settings.get("name")
+            try:
+                video_device = webcam.Camera(**settings)
+                video_device.camera_id = camera_id
+                video_device.camera_name = camera_name
+                return video_device
+            except Exception as detail:
+                print('Could not register camera {:s}. Reason: {:s}'.format(camera_id, str(detail)))
+        return None
+
+    def describe_settings(self) -> typing.List[typing.Dict]:
+        return [
+            {'name': 'camera_index', 'type': 'int'},
+            {'name': 'url', 'type': 'string'},
+            {'name': 'format', 'type': 'string'},
+            {'name': 'user', 'type': 'string'},
+            {'name': 'password', 'type': 'string'},
+            {'name': 'max_framerate', 'type': 'int'}
+        ]
+
+    def get_editor_description(self):
+        u = Declarative.DeclarativeUI()
+
+        format_combo = u.create_combo_box(items=["acti_tcm4201", "mjpeg", "pyav", "random"], current_index="@binding(format_index_model.value)")
+        url_field = u.create_line_edit(text="@binding(settings.url)", width=360)
+        user_field = u.create_line_edit(text="@binding(settings.user)", width=200)
+        password_field = u.create_line_edit(text="@binding(settings.password)", width=200)
+        max_framerate_field = u.create_line_edit(text="@binding(settings.max_framerate, converter=int_converter)", width=200)
+
+        label_column = u.create_column(u.create_label(text=_("Format:")), u.create_label(text=_("URL:")), u.create_label(text=_("User (optional):")), u.create_label(text=_("Password (optional):")), u.create_label(text=_("Max. Framerate (0 for none):")), spacing=4)
+        field_column = u.create_column(format_combo, url_field, user_field, password_field, max_framerate_field, spacing=4)
+
+        return u.create_row(label_column, field_column, u.create_stretch(), spacing=12)
+
+    def create_editor_handler(self, settings):
+
+        class EditorHandler:
+
+            def __init__(self, settings):
+                self.settings = settings
+
+                self.format_index_model = Model.PropertyModel()
+
+                formats = ["acti_tcm4201", "mjpeg", "pyav", "random"]
+
+                def format_index_changed(index):
+                    self.settings.format = formats[index]
+
+                self.format_index_model.on_value_changed = format_index_changed
+
+                self.int_converter = Converter.IntegerToStringConverter()
+
+                self.format_index_model.value = formats.index(self.settings.format) if self.settings.format in formats else 2
+
+        return EditorHandler(settings)
+
 
 class WebcamExtension:
 
@@ -40,35 +105,7 @@ class WebcamExtension:
 
     def __init__(self, api_broker):
         self.api = api_broker.get_api(version='~1.0', ui_version='~1.0')
-        self.load_camera_configurations_and_create_cameras()
+        Registry.register_component(VideoDeviceFactory(), {"video_device_factory"})
 
     def close(self):
         pass
-
-    def register_camera(self, hardware_source_id, display_name, access_data):
-        # create the camera
-        camera = webcam.Camera(**access_data)
-        #camera_map[hardware_source_id] = camera
-        # create the hardware source
-        #camera_adapter = WebcamCameraManagerImageSource.CameraAdapter(hardware_source_id, display_name, camera)
-        #hardware_source = CameraHardwareSource(camera_adapter, None)
-        #hardware_source.modes = camera_adapter.modes
-        # register it with the manager
-        #HardwareSource.HardwareSourceManager().register_hardware_source(hardware_source)
-        #self.api.create_hardware_source(camera_adapter)
-        camera.camera_id = hardware_source_id
-        camera.camera_name = display_name
-        camera.camera_type= 'ronchigram'
-        Registry.register_component(camera, {'camera_device'})
-
-
-    def load_camera_configurations_and_create_cameras(self):
-        with open(CONFIG_FILE) as config_file:
-            camera_parameters = json.load(config_file)
-            for camera in camera_parameters:
-                cam_id = camera.pop('id')
-                name = camera.pop('name', cam_id)
-                try:
-                    self.register_camera(cam_id, name, camera)
-                except Exception as detail:
-                    print('Could not register camera {:s}. Reason: {:s}'.format(cam_id, str(detail)))
