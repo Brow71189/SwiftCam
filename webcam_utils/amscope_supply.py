@@ -40,7 +40,7 @@ class AmScope_camera():
         self.max_framerate = max_framerate
         self._stop_event = threading.Event()
         if HAS_AMSCOPE_MODULE:
-            self.amscope_camera = amscope.Touptec(buffer=self.buffer)
+            self.amscope_camera = amscope.Toupcam(buffer=self.buffer)
             self._receiver_thread = threading.Thread(target=self.read_from_stream, daemon=True)
             self._receiver_thread.start()
 
