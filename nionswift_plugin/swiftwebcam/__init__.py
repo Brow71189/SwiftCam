@@ -38,11 +38,14 @@ class VideoDeviceFactory:
 
     display_name = _("Swift Cam")
     factory_id = "swiftcam"
+    
+    def __init__(self):
+        self.camera_formats = list(webcam._camera_formats.keys())
 
     def make_video_device(self, settings: dict) -> typing.Optional[webcam.Camera]:
         if settings.get("driver") == self.factory_id:
             camera_id = settings.get("device_id", settings.get("id"))
-            camera_name = settings.get("name")
+            camera_name = settings.get("name", camera_id)
             try:
                 video_device = webcam.Camera(**settings)
                 video_device.camera_id = camera_id
@@ -65,7 +68,7 @@ class VideoDeviceFactory:
     def get_editor_description(self):
         u = Declarative.DeclarativeUI()
 
-        format_combo = u.create_combo_box(items=["acti_tcm4201", "mjpeg", "pyav", "random"], current_index="@binding(format_index_model.value)")
+        format_combo = u.create_combo_box(items=self.camera_formats, current_index="@binding(format_index_model.value)")
         url_field = u.create_line_edit(text="@binding(settings.url)", width=360)
         user_field = u.create_line_edit(text="@binding(settings.user)", width=200)
         password_field = u.create_line_edit(text="@binding(settings.password)", width=200)
@@ -77,7 +80,9 @@ class VideoDeviceFactory:
         return u.create_row(label_column, field_column, u.create_stretch(), spacing=12)
 
     def create_editor_handler(self, settings):
-
+        
+        formats = self.camera_formats
+        
         class EditorHandler:
 
             def __init__(self, settings):
@@ -85,7 +90,7 @@ class VideoDeviceFactory:
 
                 self.format_index_model = Model.PropertyModel()
 
-                formats = ["acti_tcm4201", "mjpeg", "pyav", "random"]
+                
 
                 def format_index_changed(index):
                     self.settings.format = formats[index]
