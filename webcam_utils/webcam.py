@@ -66,11 +66,12 @@ class Camera:
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
         self.max_framerate = kwargs.get('max_framerate', 0)
+        self.options = kwargs.get('options', '')
 
     def start_acquisition(self):
         if self.url is not None:
             self.cam = _camera_formats[self.format.lower()](self.url, user=self.user, password=self.password,
-                                                            max_framerate=self.max_framerate)
+                                                            max_framerate=self.max_framerate, options=self.options)
 
     def acquire_data(self):
         data = np.array(self.cam.buffer.get(timeout=10))
@@ -88,3 +89,4 @@ class Camera:
         self.user = settings.get('user')
         self.password = settings.get('password')
         self.max_framerate = settings.get('max_framerate', 0)
+        self.options = settings.get('options', '')

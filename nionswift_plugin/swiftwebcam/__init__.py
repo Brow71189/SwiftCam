@@ -62,7 +62,8 @@ class VideoDeviceFactory:
             {'name': 'format', 'type': 'string'},
             {'name': 'user', 'type': 'string'},
             {'name': 'password', 'type': 'string'},
-            {'name': 'max_framerate', 'type': 'int'}
+            {'name': 'max_framerate', 'type': 'int'},
+            {'name': 'options', 'type': 'str'}
         ]
 
     def get_editor_description(self):
@@ -73,9 +74,10 @@ class VideoDeviceFactory:
         user_field = u.create_line_edit(text="@binding(settings.user)", width=200)
         password_field = u.create_line_edit(text="@binding(settings.password)", width=200)
         max_framerate_field = u.create_line_edit(text="@binding(settings.max_framerate, converter=int_converter)", width=200)
+        options_field = u.create_line_edit(text="@binding(settings.options)", width=360)
 
-        label_column = u.create_column(u.create_label(text=_("Format:")), u.create_label(text=_("URL:")), u.create_label(text=_("User (optional):")), u.create_label(text=_("Password (optional):")), u.create_label(text=_("Max. Framerate (0 for none):")), spacing=4)
-        field_column = u.create_column(format_combo, url_field, user_field, password_field, max_framerate_field, spacing=4)
+        label_column = u.create_column(u.create_label(text=_("Format:")), u.create_label(text=_("URL:")), u.create_label(text=_("User (optional):")), u.create_label(text=_("Password (optional):")), u.create_label(text=_("Max. Framerate (0 for none):")), u.create_label(text=_("Options (optional):")), spacing=4)
+        field_column = u.create_column(format_combo, url_field, user_field, password_field, max_framerate_field, options_field, spacing=4)
 
         return u.create_row(label_column, field_column, u.create_stretch(), spacing=12)
 

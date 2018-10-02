@@ -25,7 +25,7 @@ import av
 from .buffer import Buffer
 
 class PyAV_camera():
-    def __init__(self, url, max_buffer_size=10, user=None, password=None, max_framerate=None):
+    def __init__(self, url, max_buffer_size=10, user=None, password=None, max_framerate=None, options=''):
         self.url = url
         self.user = user
         self.password = password
@@ -35,8 +35,13 @@ class PyAV_camera():
             if len(spliturl) > 1:
                 concatenated_url = spliturl[0] + '://' + concatenated_url
             self.url = concatenated_url
+        self.options = {}
+        if options:
+            for option in options.split(','):
+                splitoption = option.strip().split('=')
+                self.options[splitoption[0].strip()] = splitoption[1].strip()
         self.buffer = Buffer(maxsize=max_buffer_size)
-        self.container = av.open(url)
+        self.container = av.open(url, **self.options)
         self.video_stream = next(s for s in self.container.streams if s.type == 'video')
         self.max_framerate = max_framerate
         self._stop_event = threading.Event()
