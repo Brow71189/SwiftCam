@@ -82,6 +82,7 @@ class Camera:
     def stop_acquisition(self):
         time.sleep(0.5)
         self.cam.close()
+        self.cam = None
 
     def update_settings(self, settings: dict) -> None:
         self.format = settings.get('format', 'pyav')

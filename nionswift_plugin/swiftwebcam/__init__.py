@@ -63,7 +63,7 @@ class VideoDeviceFactory:
             {'name': 'user', 'type': 'string'},
             {'name': 'password', 'type': 'string'},
             {'name': 'max_framerate', 'type': 'int'},
-            {'name': 'options', 'type': 'str'}
+            {'name': 'options', 'type': 'string'}
         ]
 
     def get_editor_description(self):

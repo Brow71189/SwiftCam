@@ -52,6 +52,8 @@ class PyAV_camera():
         self._stop_event.set()
         self._receiver_thread.join(1)
         self.buffer = None
+        self.video_stream = None
+        self.container = None
 
     def read_from_stream(self):
         for packet in self.container.demux(self.video_stream):
