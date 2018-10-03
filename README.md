@@ -3,7 +3,7 @@ SwiftCam
 
 This python package provides a simple interface for showing webcam streams within Nion Swift¹. Currently it supports
 all streams that can be received by ffmpeg. This is realized via the package "pyav"², which provides python bindings
-for ffmpeg.
+for ffmpeg. Without pyav it supports some specific stream formats such as mjpeg and can also be extended by the user to support new formats (see later sections for mor details).
 
 
 Installation and Requirements
@@ -11,19 +11,29 @@ Installation and Requirements
 
 Requirements
 ------------
-* python 3.5
-* numpy
-* PIL (for python 3 PIL is available as the fork Pillow)
-* PyAV² (optional, without pyav only mjpeg streams and streams from acti tcm 4201 cameras can be played)
+* python >=3.5 (lower versions might work but are untested)
+* nionswift-video-capture
+* numpy (should be already there if you've installed Swift)
+* PIL (for python 3, PIL is available as the fork Pillow)
+* PyAV² (optional, without pyav only certain stream formats such as mjpeg streams can be played)
+* PyAmScope³ (optional, only needed if you want to use AmScope or Touptek cameras)
 
 Installation
 ------------
-After having installed all requirements just download the source code, unzip it and copy it into your Nion Swift
-plugins location. The correct location for your operating system is described on the following website:
-http://nion.com/swift/developer/introduction.html#extension-locations
+The recommended way is to use git to clone the repository as this makes receiving updates easy:
+```bash
+git clone https://github.com/Brow71189/SwiftCam
+```
 
-__If you used github's "download ZIP" function make sure you rename the project folder to "SwiftCam" after unpacking it.__
+If you do not want to use git you can also use github's "download as zip" function and extract the code afterwards.
 
+Once you have the repository on your computer, enter the folder "SwiftCam" and run the following from a terminal:
+
+```bash
+python setup.py install
+```
+
+It is important to run this command with __exactly__ the python version that you use for running Swift. If you installed Swift according to the online documentation (https://nionswift.readthedocs.io/en/stable/installation.html#installation) you should run `conda activate nionswift` in your terminal before running the above command.
 
 Usage
 =====
@@ -31,37 +41,33 @@ Usage
 Adding a camera
 ---------------
 
-In the package there is a file included called "webcam_config.json.example". Copy or rename it to webcam_config.json.
-In the json file, each object represents one camera. The easiest way to get it to work is to alter the example file.
-The tags that can be specified for a camera are the following:
+Within Swift click on Edit -> Preferences and in the window that pops up select "SwiftCam" from the drop-down menu at the bottom. By clicking on "New" you can add a new camera and you can set up the following parameters in the user interface. Remember to click on "Apply" after changing any of the parameters.
 
-* "url": The url of your stream. If you are using the format "pyav" you can specify username and password to the stream
-         directly in the url. For "mjpeg" you have to use the "user" and "password" tags.
+* "url": The url of your stream. If you are using the format "pyav" you can specify username and password to the stream directly in the url. For "mjpeg" you have to use the "user" and "password" tags.
 
 * "id": The ID which is used by Nion Swift to identify your camera.
          
 * "format": optional, defaults to "pyav". Currently supported are "pyav", "mjpeg", "acti" and "random".
   - "pyav" will try to play the stream with PyAV (which is essentially ffmepg).
   - "mjpeg" will treat the stream as "MJPEG".
-  - "acti" is a special implementation to support acti tcm 4201 cameras as they are used by Nion for some of their
-           microscopes.
-  - "random" will enable the example camera implementation which just shows random noise. This is useful to test your
-             installation.
+  - "acti" is a special implementation to support acti tcm 4201 cameras as they are used by Nion for some of their microscopes.
+  - "amscope" is a special implementation for AmScope and Touptek cameras. 
+  - "random" will enable the example camera implementation which just shows random noise. This is useful to test your installation.
 
 * "name": optional, defaults to "id". This is the name under which the camera will be displayed in Nion Swift.
 * "user": optional, the username if your stream requires one.
 * "password": optional, the password for your stream if it is protected.
-* "max_framerate": optional, limits the framerate of the stream to the value given here. This is useful if you encounter
-                   heavy CPU load on your computer with a stream.
+* "max_framerate": optional, limits the framerate of the stream to the value given here. This is useful if you encounter heavy CPU load on your computer with a stream.
+* "options": optional, additional options sent to the webcam driver.
 
 Implementing new camera formats
 -------------------------------
 
 If your stream is not supported by the handlers shipped with this code it is easy to implement your own one. New
-handlers will be detected automatically and will be available after a restart of NionSwift. There a three requirements
+handlers will be detected automatically and will be available after a restart of Swift. There a three requirements
 for a handler to be correctly recognized:
 
-1. The new python module must be in the same folder as all other source code files of this package
+1. The new python module must be in the same folder as all other source code files of this package (which is in lib -> site-packages -> SwiftCam -> webcam_utils in your python environment)
 2. The filename of the new module must end with `_supply.py`
 3. The new module must implement a class whose name ends with `_camera`
 
@@ -77,6 +83,8 @@ The "format" tag assigned to your new camera handler will be the part of the cam
 underscore. For example if your handler implements the class `my_new_camera`, the format of this camera will be
 "my". This naming is case-insensitive.
 
-¹ www.nion.com/swift
+¹www.nion.com/swift
 
 ²https://github.com/mikeboers/PyAV
+
+³https://github.com/Brow71189/PyAmScope
