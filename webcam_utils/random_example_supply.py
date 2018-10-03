@@ -25,7 +25,7 @@ import numpy as np
 import threading
 
 class Random_Example_camera():
-    def __init__(self, url, user=None, password=None, max_framerate=30):
+    def __init__(self, url, user=None, password=None, max_framerate=30, **kwargs):
         self.url = url
         self.user = user
         self.password = password

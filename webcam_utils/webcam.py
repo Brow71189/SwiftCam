@@ -58,63 +58,36 @@ def import_camera_supplies():
 
 import_camera_supplies()
 
-class Camera():
+class Camera:
     def __init__(self, **kwargs):
-        self.format = kwargs.get('format', 'pyav')
-        self.mode = 'Run'
-        self.mode_as_index = 0
-        self.exposure_ms = 0
-        self.binning = 1
-        self.sensor_dimensions = (512,512)
-        self.readout_area = self.sensor_dimensions
-        self.binning_values = [1]
         self.cam = None
+        self.format = kwargs.get('format', 'pyav')
         self.url = kwargs.get('url')
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
         self.max_framerate = kwargs.get('max_framerate', 0)
-        self.frame_number = 0
+        self.options = kwargs.get('options', '')
 
-    def set_exposure_ms(self, exposure_ms, mode_id):
-        self.exposure_ms = exposure_ms
-
-    def get_exposure_ms(self, mode_id):
-        return self.exposure_ms
-
-    def set_binning(self, binning, mode_id):
-        self.binning = binning
-
-    def get_binning(self, mode_id):
-        return self.binning
-
-    def get_expected_dimensions(self, binning):
-        return self.sensor_dimensions
-
-    def start_live(self):
+    def start_acquisition(self):
         if self.url is not None:
             self.cam = _camera_formats[self.format.lower()](self.url, user=self.user, password=self.password,
-                                                            max_framerate=self.max_framerate)
+                                                            max_framerate=self.max_framerate, options=self.options)
 
-    def stop_live(self):
-        time.sleep(0.5)
-        self.cam.close()
-
-    def acquire_image(self):
-        data_element = {}
+    def acquire_data(self):
         data = np.array(self.cam.buffer.get(timeout=10))
         if len(data.shape) > 2 and data.shape[-1] == 3:
             data = data[..., (2, 1, 0)]
-        data_element['data'] = data
-        data_element['properties'] = {'spatial_calibrations': [{'offset': 0, 'scale': 1, 'units': None}]*2,
-                                      'frame_number': self.frame_number}
-        self.frame_number += 1
-        return data_element
+        return data
 
-    def acquire_sequence(self, n):
-        raise NotImplementedError
+    def stop_acquisition(self):
+        time.sleep(0.5)
+        self.cam.close()
+        self.cam = None
 
-    def open_monitor(self):
-        raise NotImplementedError
-
-    def open_configuration_interface(self):
-        raise NotImplementedError
+    def update_settings(self, settings: dict) -> None:
+        self.format = settings.get('format', 'pyav')
+        self.url = settings.get('url')
+        self.user = settings.get('user')
+        self.password = settings.get('password')
+        self.max_framerate = settings.get('max_framerate', 0)
+        self.options = settings.get('options', '')

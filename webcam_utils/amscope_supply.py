@@ -32,7 +32,7 @@ except ModuleNotFoundError:
                   "from AmScope import amscope.")
 
 class AmScope_camera():
-    def __init__(self, url, max_buffer_size=10, max_framerate=60, user=None, password=None):
+    def __init__(self, url, max_buffer_size=10, max_framerate=60, user=None, password=None, **kwargs):
         self.url = url
         self.user = user
         self.password = password
